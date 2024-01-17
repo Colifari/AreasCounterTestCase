@@ -1,4 +1,5 @@
 using AreasCounter;
+using System.Reflection;
 using System.Text;
 
 namespace AreasCounterTests
@@ -9,106 +10,25 @@ namespace AreasCounterTests
         StringBuilder consoleOutput;
         AreasCounterInMatrix aCounter;
 
-        [TestInitialize]
-        public void Init()
+        /// <summary>
+        /// Various test parameters for Data-Driven Unit Tests
+        /// </summary>
+        public static IEnumerable<object[]> AdditionData
         {
-            consoleOutput = new StringBuilder();
-            Console.SetOut(new StringWriter(consoleOutput));    // Associate StringBuilder with StdOut
-            aCounter = new AreasCounterInMatrix();
-        }
-
-        [TestMethod]
-        public void EmptyStringTest()
-        {
-            aCounter.Count(string.Empty);
-
-            var lines = consoleOutput.ToString().Split("\r\n");
-
-            Assert.IsTrue(lines[0] == "0");
-        }
-
-        [TestMethod]
-        public void OneByOne_1_Test()
-        {
-            aCounter.Count("1");
-
-            var lines = consoleOutput.ToString().Split("\r\n");
-
-            Assert.IsTrue(lines[0] == "1");
-        }
-
-        [TestMethod]
-        public void OneByOne_0_Test()
-        {
-            aCounter.Count("0");
-
-            var lines = consoleOutput.ToString().Split("\r\n");
-
-            Assert.IsTrue(lines[0] == "0");
-        }
-
-        [TestMethod]
-        public void SamplesTests()
-        {
-
-            aCounter.Count("1,0,1");
-            var lines = consoleOutput.ToString().Split("\r\n");
-
-            Assert.IsTrue(lines[0] == "2");
-
-            aCounter.Count("1,0,1;0,1,0");
-
-            lines = consoleOutput.ToString().Split("\r\n");
-
-            Assert.IsTrue(lines[1] == "3");
-
-            aCounter.Count("1,0,1;1,1,0");
-
-            lines = consoleOutput.ToString().Split("\r\n");
-
-            Assert.IsTrue(lines[2] == "2");
-
-            aCounter.Count("1,1,1,0;0,1,0,0");
-
-            lines = consoleOutput.ToString().Split("\r\n");
-
-            Assert.IsTrue(lines[3] == "1");
-        }
-
-        [TestMethod]
-        public void ElevenByThreeTest()
-        {
-            var inputString = @"
-                                1,1,1,0,0,1,0,0,1,0,0;
-                                0,1,0,0,0,0,1,0,0,0,0;
-                                0,1,0,0,0,0,0,0,0,0,0;";
-
-
-            aCounter.Count(inputString);
-            var lines = consoleOutput.ToString().Split("\r\n");
-            Assert.IsTrue(lines[0] == "4");
-        }
-
-        [TestMethod]
-        public void ElevenByFourTest()
-        {
-            var inputString = @"
+            get
+            {
+                return new object[][]
+                {
+                    [ @"
+                        1,1,1,0,0,1,0,0,1,0,0;
+                        0,1,0,0,0,0,1,0,0,0,0;
+                        0,1,0,0,0,0,0,0,0,0,0;", 4, 1 ],
+                    [ @"
                                 1,1,1,0,0,1,0,0,1,0,0;
                                 0,1,0,0,0,0,1,0,1,0,0;
                                 0,0,0,0,1,1,0,0,1,0,0;
-                                0,1,1,0,0,0,0,0,1,1,0;";
-
-
-            var result = aCounter.Count(inputString);
-            var lines = consoleOutput.ToString().Split("\r\n");
-            Assert.AreEqual(6, result);
-            Assert.IsTrue(lines[0] == "6");
-        }
-
-        [TestMethod]
-        public void FifteenByNineTest()
-        {
-            var inputString = @"
+                                0,1,1,0,0,0,0,0,1,1,0;", 6, 2 ],
+                    [ @"
                                 0,0,0,0,0,0,0,1,0,0,0,0,0,0,0;
                                 0,0,0,0,0,0,1,1,1,0,0,0,0,0,0;
                                 0,0,0,0,0,1,1,1,1,1,0,0,0,0,0;
@@ -117,19 +37,8 @@ namespace AreasCounterTests
                                 0,0,0,0,0,1,1,1,1,1,0,0,0,0,0;
                                 0,0,0,0,0,0,1,1,1,0,0,0,0,0,0;
                                 0,0,0,0,0,0,0,1,0,0,0,0,0,0,0;
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;";
-
-
-            var result = aCounter.Count(inputString);
-            var lines = consoleOutput.ToString().Split("\r\n");
-            Assert.AreEqual(1, result);
-            Assert.IsTrue(lines[0] == "1");
-        }
-
-        [TestMethod]
-        public void FifteenByNineTestWHole()
-        {
-            var inputString = @"
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;", 1, 3 ],
+                    [ @"
                                 0,0,0,0,0,0,0,1,0,0,0,0,0,0,0;
                                 0,0,0,0,0,0,1,1,1,0,0,0,0,0,0;
                                 0,0,0,0,0,1,1,1,1,1,0,0,0,0,0;
@@ -138,19 +47,8 @@ namespace AreasCounterTests
                                 0,0,0,0,0,1,1,1,1,1,0,0,0,0,0;
                                 0,0,0,0,0,0,1,1,1,0,0,0,0,0,0;
                                 0,0,0,0,0,0,0,1,0,0,0,0,0,0,0;
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;";
-
-
-            var result = aCounter.Count(inputString);
-            var lines = consoleOutput.ToString().Split("\r\n");
-            Assert.AreEqual(1, result);
-            Assert.IsTrue(lines[0] == "1");
-        }
-
-        [TestMethod]
-        public void FifteenByNineTest2()
-        {
-            var inputString = @"
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;", 1, 4 ],
+                    [ @"
                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
                                 1,1,0,0,0,0,0,0,0,0,0,0,0,0,0;
@@ -159,19 +57,8 @@ namespace AreasCounterTests
                                 0,1,0,0,0,0,0,0,0,0,0,0,0,0,0;
                                 1,1,0,0,0,0,0,0,0,0,0,0,0,0,0;
                                 1,1,0,0,0,0,0,0,0,0,0,0,0,0,0;
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;";
-
-
-            var result = aCounter.Count(inputString);
-            var lines = consoleOutput.ToString().Split("\r\n");
-            Assert.AreEqual(1, result);
-            Assert.IsTrue(lines[0] == "1");
-        }
-
-        [TestMethod]
-        public void CircleTest()
-        {
-            var inputString = @"
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;", 1, 5 ],
+                    [ @"
                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
                                 0,0,0,0,0,0,0,1,1,0,0,0,0,0,0;
                                 0,0,0,0,0,0,1,0,0,1,0,0,0,0,0;
@@ -180,19 +67,8 @@ namespace AreasCounterTests
                                 0,0,0,0,0,1,0,0,0,0,1,0,0,0,0;
                                 0,0,0,0,0,0,1,0,0,1,0,0,0,0,0;
                                 0,0,0,0,0,0,0,1,1,0,0,0,0,0,0;
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;";
-
-
-            var result = aCounter.Count(inputString);
-            var lines = consoleOutput.ToString().Split("\r\n");
-            Assert.AreEqual(12, result);
-            Assert.IsTrue(lines[0] == "12");
-        }
-
-        [TestMethod]
-        public void CircleThickTest()
-        {
-            var inputString = @"
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;", 12, 6 ],
+                    [ @"
                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
                                 0,0,0,0,0,0,1,1,1,0,0,0,0,0,0;
                                 0,0,0,0,0,1,1,0,1,1,0,0,0,0,0;
@@ -201,19 +77,8 @@ namespace AreasCounterTests
                                 0,0,0,0,1,1,0,0,0,0,1,1,0,0,0;
                                 0,0,0,0,0,1,1,0,0,1,1,0,0,0,0;
                                 0,0,0,0,0,0,1,1,1,1,0,0,0,0,0;
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;";
-
-
-            var result = aCounter.Count(inputString);
-            var lines = consoleOutput.ToString().Split("\r\n");
-            Assert.AreEqual(1, result);
-            Assert.IsTrue(lines[0] == "1");
-        }
-
-        [TestMethod]
-        public void PyramidTest()
-        {
-            var inputString = @"
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;", 1, 7 ],
+                    [ @"
                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,1;
                                 0,0,0,0,0,0,0,0,0,0,0,0,0,1,1;
                                 0,0,0,0,0,0,0,0,0,0,0,0,1,1,1;
@@ -222,19 +87,8 @@ namespace AreasCounterTests
                                 0,0,0,0,0,0,0,0,0,1,1,1,1,1,1;
                                 0,0,0,0,0,0,0,0,1,1,1,1,1,1,1;
                                 0,0,0,0,0,0,0,1,1,1,1,1,1,1,1;
-                                0,0,0,0,0,0,1,1,1,1,1,1,1,1,1;";
-
-
-            var result = aCounter.Count(inputString);
-            var lines = consoleOutput.ToString().Split("\r\n");
-            Assert.AreEqual(1, result);
-            Assert.IsTrue(lines[0] == "1");
-        }
-
-        [TestMethod]
-        public void VTest()
-        {
-            var inputString = @"
+                                0,0,0,0,0,0,1,1,1,1,1,1,1,1,1;", 1, 8 ],
+                    [ @"
                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
                                 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
                                 0,0,0,0,0,0,0,0,0,0,1,1,0,0,0;
@@ -243,19 +97,18 @@ namespace AreasCounterTests
                                 0,0,0,0,0,1,0,1,1,0,0,0,0,0,0;
                                 0,0,0,0,0,1,1,1,0,0,0,0,0,0,0;
                                 0,0,0,0,0,0,1,0,0,0,0,0,0,0,0;
-                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;";
-
-
-            var result = aCounter.Count(inputString);
-            var lines = consoleOutput.ToString().Split("\r\n");
-            Assert.AreEqual(1, result);
-            Assert.IsTrue(lines[0] == "1");
-        }
-
-        [TestMethod]
-        public void OneHundredByOneHundredTest()
-        {
-            var inputString = @"
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;", 1, 9 ],
+                    [ @"
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
+                                0,0,0,0,0,0,0,0,0,0,1,1,0,0,0;
+                                0,0,0,0,0,0,0,0,0,1,1,0,0,0,0;
+                                0,0,0,0,0,1,0,0,1,1,0,0,0,0,0;
+                                0,0,0,0,0,1,0,1,1,0,0,0,0,0,0;
+                                0,0,0,0,0,1,1,1,0,0,0,0,0,0,0;
+                                0,0,0,0,0,0,1,0,0,0,0,0,0,0,0;
+                                0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;", 1, 10 ],
+                    [ @"
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
@@ -356,12 +209,62 @@ namespace AreasCounterTests
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
-            ";
-
-            var result = aCounter.Count(inputString);
-            var lines = consoleOutput.ToString().Split("\r\n");
-            Assert.AreEqual(5, result);
-            Assert.IsTrue(lines[0] == "5");
+            ", 5, 11 ]
+                };
+            }
         }
+
+        /// <summary>
+        /// How to form name for Data-Driven Unit Tests
+        /// </summary>
+        public static string AdditionDataTestNames(MethodInfo methodInfo, object[] values)
+        {
+            return $"{methodInfo.Name} #{values[2]}";
+        }
+
+        [TestInitialize]
+        public void Init()
+        {
+            consoleOutput = new StringBuilder();
+            Console.SetOut(new StringWriter(consoleOutput));    // Associate StringBuilder with StdOut
+            aCounter = new AreasCounterInMatrix();
+        }       
+
+        [TestMethod]
+        [DataRow("", 0)]
+        [DataRow("1", 1)]
+        [DataRow("0", 0)]
+        public void SimpleTest(string value, int expected)
+        {
+            var result = aCounter.Count(value);
+            var lines = consoleOutput.ToString().Split("\r\n");
+            Assert.AreEqual(expected, result);
+            Assert.IsTrue(lines[0] == expected.ToString());
+        }
+        
+
+        [TestMethod]
+        [DataRow("1,0,1", 2)]
+        [DataRow("1,0,1;0,1,0", 3)]
+        [DataRow("1,0,1;1,1,0", 2)]
+        [DataRow("1,1,1,0;0,1,0,0", 1)]
+        public void SamplesTests(string value, int expected)
+        {
+            var result = aCounter.Count(value);
+            var lines = consoleOutput.ToString().Split("\r\n");
+            Assert.AreEqual(expected, result);
+            Assert.IsTrue(lines[0] == expected.ToString());
+        }
+
+        [TestMethod]
+        [DynamicData(nameof(AdditionData), DynamicDataDisplayName = nameof(AdditionDataTestNames))]
+        public void AdditionalTests(string value, int expected, int testNum)
+        {
+            var result = aCounter.Count(value);
+            var lines = consoleOutput.ToString().Split("\r\n");
+            Assert.AreEqual(expected, result);
+            Assert.IsTrue(lines[0] == expected.ToString());
+        }
+
     }
 }
